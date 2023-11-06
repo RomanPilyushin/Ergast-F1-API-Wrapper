@@ -32,7 +32,7 @@ To use this wrapper in your Maven project, you'll need to include the following 
 ### Step 2: Add the dependency
 ```xml
 <dependency>
-    <groupId>https://github.com/RomanPilyushin</groupId>
+    <groupId>com.github.RomanPilyushin</groupId>
     <artifactId>Ergast-F1-API-Wrapper</artifactId>
     <version>master-SNAPSHOT</version>
 </dependency>
