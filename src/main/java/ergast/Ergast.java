@@ -20,13 +20,22 @@ import java.util.logging.Logger;
 
 /**
  * Ergast API Wrapper Class.
+ * This class provides methods to access and parse data from the Ergast API for different categories
+ * like drivers, circuits, and race results.
  */
+
 public class Ergast {
 
+    // Logger to log information, warnings, or errors.
     private static final Logger LOG = Logger.getLogger(Ergast.class.getName());
+
+    // User-Agent header value to be used in HTTP requests to simulate a web browser request.
     private static final String USER_AGENT = "Mozilla/5.0";
+
+    // Template for the base URL used to construct Ergast API endpoint URLs.
     private static final String BASE_URL_TEMPLATE = "http://ergast.com/api/f1/{SEASON}/{ROUND}/{REQUEST}.json?limit={LIMIT}&offset={OFFSET}";
 
+    // Constant strings representing different parts of the API endpoints.
     private static final String DRIVERS = "drivers";
     private static final String CIRCUITS = "circuits";
     private static final String CONSTRUCTORS = "constructors";
@@ -39,25 +48,33 @@ public class Ergast {
     private static final String LAP_TIMES = "laps";
     private static final String PIT_STOPS = "pitstops";
 
-    private final int season;
-    private int limit;
-    private int offset;
 
-    public static final int NO_SEASON = -1;
-    public static final int DEFAULT_LIMIT = 30;
-    public static final int DEFAULT_OFFSET = 0;
-    public static final int NO_ROUND = -1;
+    // Parameters for the API request.
+    private final int season; // The season year to query data for.
+    private int limit; // The limit on the number of records to fetch.
+    private int offset; // The offset for pagination of the results.
 
+
+    // Constants for default or undefined values.
+    public static final int NO_SEASON = -1; // Sentinel value for no specific season.
+    public static final int DEFAULT_LIMIT = 30; // Default limit for API responses.
+    public static final int DEFAULT_OFFSET = 0; // Default offset for API responses.
+    public static final int NO_ROUND = -1; // Sentinel value for no specific round.
+
+
+    // Constructors to initialize the Ergast API wrapper instance.
     public Ergast(int season, int limit, int offset) {
-        setLimit(limit);
-        setOffset(offset);
-        this.season = season;
+        setLimit(limit); // Validate and set the limit.
+        setOffset(offset); // Validate and set the offset.
+        this.season = season; // Set the season for the instance.
     }
 
+    // Default constructor with default values.
     public Ergast() {
         this(NO_SEASON, DEFAULT_LIMIT, DEFAULT_OFFSET);
     }
 
+    // Methods to retrieve data from the API, parsing JSON responses into lists of objects.
     public List<Driver> getDrivers() throws IOException {
         return parseResponse(DRIVERS, NO_ROUND, Driver.class, new String[]{"DriverTable", "Drivers"});
     }
@@ -111,6 +128,7 @@ public class Ergast {
         return parseResponse(PIT_STOPS, round, RacePitStops.class, new String[]{"RaceTable", "Races"});
     }
 
+    // Helper method to construct the API URL.
     private String buildUrl(String request, int round) {
         String seasonStr = season == NO_SEASON ? "current" : Integer.toString(season);
         String roundStr = round == NO_ROUND ? "" : Integer.toString(round);
@@ -121,6 +139,18 @@ public class Ergast {
                 .replace("{LIMIT}", Integer.toString(limit))
                 .replace("{OFFSET}", Integer.toString(offset));
     }
+
+
+    /**
+     * Generic method to parse the JSON response from the API request.
+     *
+     * @param request  The specific API request endpoint.
+     * @param round    The round number within a season.
+     * @param type     The class type of the expected response objects.
+     * @param jsonPath The JSON path to extract the desired array from the response.
+     * @return A list of parsed objects of the specified type.
+     * @throws IOException If an I/O exception occurs.
+     */
 
     private <T> List<T> parseResponse(String request, int round, Class<T> type, String... jsonPath) throws IOException {
         String url = buildUrl(request, round);
@@ -134,7 +164,7 @@ public class Ergast {
         return parser.parse();
     }
 
-
+    // Helper method to perform the actual HTTP request and retrieve the JSON string.
     private String getJson(String urlStr) throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
@@ -152,6 +182,7 @@ public class Ergast {
         return response.body();
     }
 
+    // Helper methods to ensure required parameters like season and round are set before making certain API requests.
     private void requireSeason() {
         if (season == NO_SEASON) {
             throw new SeasonException("Season must be specified for this request.");
@@ -165,6 +196,7 @@ public class Ergast {
         }
     }
 
+    // Methods to set the limit and offset for API requests with validations.
     public void setLimit(int limit) {
         if (limit < 1 || limit > 1000) {
             throw new QueryLimitException("Limit must be between 1 and 1000.");
@@ -178,6 +210,4 @@ public class Ergast {
         }
         this.offset = offset;
     }
-
-    // Add any additional methods or logic as needed.
 }
