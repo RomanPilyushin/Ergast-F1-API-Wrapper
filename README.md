@@ -32,9 +32,9 @@ To use this wrapper in your Maven project, you'll need to include the following 
 ### Step 2: Add the dependency
 ```xml
 <dependency>
-    <groupId>com.github.rpilyushin.formula-one-ergast</groupId>
-    <artifactId>ergast</artifactId>
-    <version>0.1.1</version>
+    <groupId>https://github.com/RomanPilyushin</groupId>
+    <artifactId>Ergast-F1-API-Wrapper</artifactId>
+    <version>master-SNAPSHOT</version>
 </dependency>
 ```
 
