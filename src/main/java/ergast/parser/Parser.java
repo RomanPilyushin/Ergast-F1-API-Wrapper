@@ -8,8 +8,14 @@ import ergast.objects.RaceResult;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class Parser<T> {
+    private static final Gson GSON = new Gson(); // Reuse the GSON instance
+    private static final Pattern FIX_JSON_PATTERN = Pattern.compile(
+            "\"(Location|Circuit|Constructor|Driver|Time|AverageSpeed|FastestLap|Q1|Q2|Q3|Constructors|Laps|Timings|PitStops)\"",
+            Pattern.CASE_INSENSITIVE);
+
     private String json;
     private String[] jsonObjects;
     private Class<T> type;
@@ -20,58 +26,43 @@ public class Parser<T> {
         this.type = type;
     }
 
-    public List<T> parse(String json, Class<T> type, String... jsonObjects) {
-        this.json = json;
-        this.jsonObjects = jsonObjects;
-        this.type = type;
+    public List<T> parse() { // Removed redundant parameters
         fixJson();
 
         JsonArray jarray = getJsonArray();
         List<T> entities = new ArrayList<>();
 
-        Gson gson = new Gson();
-        for (int i = 0; i < jarray.size(); i++) {
-            entities.add(gson.fromJson(jarray.get(i).getAsJsonObject(), type));
+        for (JsonElement jelement : jarray) {
+            entities.add(GSON.fromJson(jelement, type));
         }
 
         return entities;
     }
 
-
     private JsonArray getJsonArray() {
-        JsonElement jelement = new JsonParser().parse(json);
-        JsonObject jobject = jelement.getAsJsonObject();
-        jobject = jobject.getAsJsonObject("MRData");
+        JsonElement jelement = JsonParser.parseString(json);
+        JsonObject jobject = jelement.getAsJsonObject().getAsJsonObject("MRData");
 
-        if (type == RaceResult.class || type == Qualification.class
-                || type == DriverStandings.class || type == ConstructorStandings.class) {
-            for (int i = 0; i < jsonObjects.length - 2; i++) {
-                jobject = jobject.getAsJsonObject(jsonObjects[i]);
-            }
-            jobject = jobject.getAsJsonArray(jsonObjects[jsonObjects.length - 2]).get(0).getAsJsonObject();
-        } else {
-            for (int i = 0; i < jsonObjects.length - 1; i++) {
-                jobject = jobject.getAsJsonObject(jsonObjects[i]);
+        for (int i = 0; i < jsonObjects.length - 1; i++) {
+            jelement = jobject.get(jsonObjects[i]);
+            if (jelement != null && !jelement.isJsonNull()) {
+                jobject = jelement.getAsJsonObject();
+            } else {
+                throw new JsonParseException("Missing object in JSON path: " + jsonObjects[i]);
             }
         }
-        return jobject.getAsJsonArray(jsonObjects[jsonObjects.length - 1]);
+
+        JsonElement jsonArrayElement = jobject.get(jsonObjects[jsonObjects.length - 1]);
+        if (jsonArrayElement != null && jsonArrayElement.isJsonArray()) {
+            return jsonArrayElement.getAsJsonArray();
+        } else {
+            throw new JsonParseException("Missing array in JSON path: " + jsonObjects[jsonObjects.length - 1]);
+        }
     }
 
     private void fixJson() {
-        json = json.
-                replace("\"Location\"", "\"location\"").
-                replace("\"Circuit\"", "\"circuit\"").
-                replace("\"Constructor\"", "\"constructor\"").
-                replace("\"Driver\"", "\"driver\"").
-                replace("\"Time\"", "\"time\"").
-                replace("\"AverageSpeed\"", "\"averageSpeed\"").
-                replace("\"FastestLap\"", "\"fastestLap\"").
-                replace("\"Q1\"", "\"q1\"").
-                replace("\"Q2\"", "\"q2\"").
-                replace("\"Q3\"", "\"q3\"").
-                replace("\"Constructors\"", "\"constructors\"").
-                replace("\"Laps\"", "\"laps\"").
-                replace("\"Timings\"", "\"timings\"").
-                replace("\"PitStops\"", "\"pitStops\"");
+        json = FIX_JSON_PATTERN.matcher(json).replaceAll(matchResult ->
+                "\"" + matchResult.group(1).toLowerCase() + "\""
+        );
     }
 }

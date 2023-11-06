@@ -122,7 +122,7 @@ public class Ergast {
         String url = buildUrl(request, round);
         String jsonResponse = getJson(url);
         Parser<T> parser = new Parser<>(jsonResponse, jsonPath, type); // Instantiating with required arguments
-        return parser.parse(jsonResponse, type, jsonPath);
+        return parser.parse();
     }
 
 
