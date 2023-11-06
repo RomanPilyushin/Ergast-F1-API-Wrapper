@@ -1,10 +1,6 @@
 package ergast.parser;
 
 import com.google.gson.*;
-import ergast.objects.ConstructorStandings;
-import ergast.objects.DriverStandings;
-import ergast.objects.Qualification;
-import ergast.objects.RaceResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +13,8 @@ public class Parser<T> {
             Pattern.CASE_INSENSITIVE);
 
     private String json;
-    private String[] jsonObjects;
-    private Class<T> type;
+    private final String[] jsonObjects;
+    private final Class<T> type;
 
     public Parser(String json, String[] jsonObjects, Class<T> type) {
         this.json = json;

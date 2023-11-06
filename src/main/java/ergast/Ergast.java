@@ -10,7 +10,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -35,7 +39,7 @@ public class Ergast {
     private static final String LAP_TIMES = "laps";
     private static final String PIT_STOPS = "pitstops";
 
-    private int season;
+    private final int season;
     private int limit;
     private int offset;
 
@@ -120,31 +124,32 @@ public class Ergast {
 
     private <T> List<T> parseResponse(String request, int round, Class<T> type, String... jsonPath) throws IOException {
         String url = buildUrl(request, round);
-        String jsonResponse = getJson(url);
+        String jsonResponse = null;
+        try {
+            jsonResponse = getJson(url);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         Parser<T> parser = new Parser<>(jsonResponse, jsonPath, type); // Instantiating with required arguments
         return parser.parse();
     }
 
 
-    private String getJson(String urlStr) throws IOException {
-        URL url = new URL(urlStr);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
-        connection.setRequestProperty("User-Agent", USER_AGENT);
-        int responseCode = connection.getResponseCode();
+    private String getJson(String urlStr) throws IOException, InterruptedException {
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(urlStr))
+                .header("User-Agent", USER_AGENT)
+                .GET()
+                .build();
 
-        if (responseCode != HttpURLConnection.HTTP_OK) {
-            throw new IOException("HTTP request not successful. Response Code: " + responseCode);
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() != HttpURLConnection.HTTP_OK) {
+            throw new IOException("HTTP request not successful. Response Code: " + response.statusCode());
         }
 
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
-            String inputLine;
-            StringBuilder response = new StringBuilder();
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-            return response.toString();
-        }
+        return response.body();
     }
 
     private void requireSeason() {
