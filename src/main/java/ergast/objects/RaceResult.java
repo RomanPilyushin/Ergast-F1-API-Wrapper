@@ -1,10 +1,5 @@
 package ergast.objects;
 
-/**
- * Date: 10.03.17
- *
- * @author olerom
- */
 public class RaceResult {
     private int number;
     private int position;

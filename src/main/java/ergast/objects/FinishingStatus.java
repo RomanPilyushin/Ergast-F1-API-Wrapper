@@ -1,10 +1,5 @@
 package ergast.objects;
 
-/**
- * Date: 14.03.17
- *
- * @author olerom
- */
 public class FinishingStatus {
     private int statusId;
     private int count;

@@ -1,10 +1,5 @@
 package ergast.objects;
 
-/**
- * Date: 15.03.17
- *
- * @author olerom
- */
 public class PitStop {
     private String driverId;
     private int stop;

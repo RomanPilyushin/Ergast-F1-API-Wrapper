@@ -1,11 +1,5 @@
 package ergast.objects;
 
-/**
- * Date: 09.03.17
- * Season object
- *
- * @author olerom
- */
 public class Season {
     private int season;
     private String url;

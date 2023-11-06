@@ -1,10 +1,5 @@
 package ergast.objects;
 
-/**
- * Date: 11.03.17
- *
- * @author olerom
- */
 public class FastestLap {
     private int rank;
     private int lap;

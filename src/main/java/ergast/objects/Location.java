@@ -1,11 +1,5 @@
 package ergast.objects;
 
-/**
- * Date: 09.03.17
- * Location object
- *
- * @author olerom
- */
 public class Location {
     private float lat;
     private float lng;

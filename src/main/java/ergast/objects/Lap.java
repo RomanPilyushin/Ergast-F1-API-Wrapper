@@ -2,11 +2,6 @@ package ergast.objects;
 
 import java.util.List;
 
-/**
- * Date: 14.03.17
- *
- * @author olerom
- */
 public class Lap {
     private int number;
     private List<Timing> timings;

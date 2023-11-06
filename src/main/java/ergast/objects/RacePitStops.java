@@ -2,11 +2,6 @@ package ergast.objects;
 
 import java.util.List;
 
-/**
- * Date: 15.03.17
- *
- * @author olerom
- */
 public class RacePitStops {
     private int season;
     private int round;

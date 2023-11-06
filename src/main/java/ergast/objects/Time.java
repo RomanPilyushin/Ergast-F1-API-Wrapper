@@ -1,11 +1,5 @@
 package ergast.objects;
 
-/**
- * Date: 11.03.17
- * Time object
- *
- * @author olerom
- */
 public class Time {
     private int millis;
     private String time;

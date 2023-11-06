@@ -1,11 +1,5 @@
 package ergast.objects;
 
-/**
- * Date: 10.03.17
- * Schedule object
- *
- * @author olerom
- */
 public class Schedule {
     private int season;
     private int round;

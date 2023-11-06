@@ -9,11 +9,6 @@ import ergast.objects.RaceResult;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Date: 09.03.17
- *
- * @author olerom
- */
 public class Parser<T> {
     private String json;
     private String[] jsonObjects;
@@ -62,7 +57,6 @@ public class Parser<T> {
         return jobject.getAsJsonArray(jsonObjects[jsonObjects.length - 1]);
     }
 
-    // TODO: optimize by using class type
     private void fixJson() {
         json = json.
                 replace("\"Location\"", "\"location\"").

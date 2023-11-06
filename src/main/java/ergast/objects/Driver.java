@@ -1,11 +1,5 @@
 package ergast.objects;
 
-/**
- * Date: 08.03.17
- * Driver object
- *
- * @author olerom
- */
 public class Driver {
 
     private String driverId;

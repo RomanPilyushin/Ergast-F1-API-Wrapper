@@ -1,11 +1,5 @@
 package ergast.objects;
 
-/**
- * Date: 14.03.17
- * Timing object
- *
- * @author olerom
- */
 public class Timing {
     private String driverId;
     private int position;
