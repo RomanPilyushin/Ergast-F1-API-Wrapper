@@ -13,8 +13,10 @@ public class Start {
     public static void main(String[] args) {
         try {
             Ergast ergast = new Ergast(2016, 100, 2);
-            List<RacePitStops> racePitStopsList = ergast.getRacePitStops(21);
-            writeListToCSV(racePitStopsList);
+            List<RacePitStops> results = ergast.getRacePitStops(21);
+            writeListToCSV(results);
+
+            results.forEach(result -> System.out.println(result));
 
         } catch (IOException e) {
             e.printStackTrace();
