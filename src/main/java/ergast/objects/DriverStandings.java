@@ -1,7 +1,15 @@
 package ergast.objects;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import java.util.List;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class DriverStandings {
     private int position;
     private String positionText;
@@ -10,48 +18,4 @@ public class DriverStandings {
     private Driver driver;
     private List<Constructor> constructors;
 
-    public DriverStandings(int position, String positionText, int points, int wins, Driver driver, List<Constructor> constructors) {
-        this.position = position;
-        this.positionText = positionText;
-        this.points = points;
-        this.wins = wins;
-        this.driver = driver;
-        this.constructors = constructors;
-    }
-
-    public int getPosition() {
-        return position;
-    }
-
-    public String getPositionText() {
-        return positionText;
-    }
-
-    public int getPoints() {
-        return points;
-    }
-
-    public int getWins() {
-        return wins;
-    }
-
-    public Driver getDriver() {
-        return driver;
-    }
-
-    public List<Constructor> getConstructors() {
-        return constructors;
-    }
-
-    @Override
-    public String toString() {
-        return "DriverStandings{" +
-                "position=" + position +
-                ", positionText='" + positionText + '\'' +
-                ", points=" + points +
-                ", wins=" + wins +
-                ", driver=" + driver +
-                ", constructors=" + constructors +
-                '}';
-    }
 }

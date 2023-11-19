@@ -14,7 +14,7 @@ public class Start {
         try {
             Ergast ergast = new Ergast(2016, 100, 2);
             List<RacePitStops> results = ergast.getRacePitStops(21);
-            writeListToCSV(results);
+            //writeListToCSV(results);
 
             results.forEach(result -> System.out.println(result));
 
